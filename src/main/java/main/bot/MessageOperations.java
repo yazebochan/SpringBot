@@ -12,7 +12,10 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 public class MessageOperations {
-    MessageSender messageSender = new MessageSender();
+    JokeBot jokeBot;
+    public MessageOperations(JokeBot jokeBot){
+        this.jokeBot = jokeBot;
+    }
     public void messageEqualsMinus(Update update, NewUser newUser1, HashMap<Long, HashMap<ReceivedMessage, JokeInMap>> chatMap, HashMap<Integer, NewUser> allUsers){
         Message message = update.getMessage();
         ReceivedMessage newUser = new ReceivedMessage();
@@ -35,7 +38,7 @@ public class MessageOperations {
         {
             if (chatMap.get(message.getChatId()).containsKey(newUser)) {
                 if (chatMap.get(message.getChatId()).get(newUser).getReactedUser().contains(joke.getReactedUser())) {
-                    messageSender.sendMsg(message, "Уже минусовал это сообщение, хватит");
+                    jokeBot.sendMsg(message, "Уже минусовал это сообщение, хватит");
                 } else {
                     Integer i = chatMap.get(message.getChatId()) //get innerMap
                             .get(newUser).getCount(); //get number of "Jokes" for currently user
@@ -87,7 +90,7 @@ public class MessageOperations {
             {
                 if (chatMap.get(message.getChatId()).containsKey(newUser)) {
                     if (chatMap.get(message.getChatId()).get(newUser).getReactedUser().contains(joke.getReactedUser()) && chatMap.get(message.getChatId()).get(newUser).getCount().equals(1)) {
-                        messageSender.sendMsg(message, "Уже плюсовал это сообщение, шутка норм, согласен");
+                        jokeBot.sendMsg(message, "Уже плюсовал это сообщение, шутка норм, согласен");
                     } else {
                         Integer i = chatMap.get(message.getChatId()) //get innerMap
                                 .get(newUser).getCount(); //get number of "Jokes" for currently user
@@ -122,10 +125,10 @@ public class MessageOperations {
         ArrayList<Integer> maxUsers = new ArrayList<>();
 
         if (!chatMap.containsKey(message.getChatId())) {
-            messageSender.sendMsg(message, "В данном чате еще никто \"Хуево\" не шутил");
+            jokeBot.sendMsg(message, "В данном чате еще никто \"Хуево\" не шутил");
         } else {
             if (chatMap.isEmpty()) {
-                messageSender.sendMsg(message, "список пуст");
+                jokeBot.sendMsg(message, "список пуст");
             } else {
                 Integer min = 0;
                 Integer max = 0;
@@ -138,7 +141,6 @@ public class MessageOperations {
                         tmpMap.put(key.getId(), chatMap.get(message.getChatId()).get(key).getCount());
                     }
                 }
-                System.out.println(tmpMap);
                 for (Integer key : tmpMap.keySet()) {
                     if (tmpMap.get(key) <= min) {
                         min = tmpMap.get(key);
@@ -159,20 +161,28 @@ public class MessageOperations {
                         maxUsers.add(key);
                     }
                 }
-                System.out.println(maxUsers);
-                {
-                    messageSender.sendMsg(message, "Звание \"Хуев шутник\" сегодня получает ");
-                    for (Integer i : minUsers) {
-                        messageSender.sendMessage(message, allUsers.get(i).getFirstName() + " " + allUsers.get(i).getLastName() +
-                                " @" + allUsers.get(i).getUserName() + " рейтинг " + min);
+                System.out.println(minUsers);
+                    if (!minUsers.isEmpty() && min != 0) {
+                        jokeBot.sendMsg(message, "Звание \"Хуев шутник\" сегодня получает ");
+                        for (Integer i : minUsers) {
+                            jokeBot.sendMessage(message, allUsers.get(i).getFirstName() + " " + allUsers.get(i).getLastName() +
+                                    " @" + allUsers.get(i).getUserName() + " рейтинг " + min);
+                        }
+                        minUsers.clear();
+                    }else if (minUsers.isEmpty() && min == 0){
+                        jokeBot.sendMsg(message, "Все хуевые шутники исправились ");
                     }
-                    messageSender.sendMsg(message, "Звание \"Шутник дня\" сегодня получает ");
-                    for (Integer j : maxUsers) {
-                        messageSender.sendMessage(message, allUsers.get(j).getFirstName() + " " + allUsers.get(j).getLastName() +
-                                " @" + allUsers.get(j).getUserName() + " рейтинг " + max);
+                    if (!maxUsers.isEmpty() && max != 0) {
+                        jokeBot.sendMsg(message, "Звание \"Шутник дня\" сегодня получает ");
+                        for (Integer j : maxUsers) {
+                            jokeBot.sendMessage(message, allUsers.get(j).getFirstName() + " " + allUsers.get(j).getLastName() +
+                                    " @" + allUsers.get(j).getUserName() + " рейтинг " + max);
+                        }
+                        maxUsers.clear();
                     }
-                    maxUsers.clear();
-                }
+                    else if (maxUsers.isEmpty() && max == 0){
+                        jokeBot.sendMsg(message, "Все нормальные шутники скатились ");
+                    }
             }
         }
     }
@@ -184,7 +194,7 @@ public class MessageOperations {
         HashMap<Integer, Integer> finalMapBeyondZero = new HashMap<>();
         for (ReceivedMessage key : tmpMap.keySet()){
             if (finalMap.containsKey(key.getId())){
-                finalMap.put(key.getId(), finalMap.get(key.getId())+1);
+                finalMap.put(key.getId(), finalMap.get(key.getId()) + chatMap.get(message.getChatId()).get(key).getCount());
             }
             else
                 finalMap.put(key.getId(), tmpMap.get(key).getCount());
@@ -203,13 +213,13 @@ public class MessageOperations {
         MapOperations mapOperations = new MapOperations();
         ArrayList<ReceivedMessage> sortedUsers = mapOperations.sortingKeys(finalMapBeyondZero);
         if (sortedUsers.size() > 0) {
-            messageSender.sendMsg(message, "Топ хуевых шутников сегодня: ");
+            jokeBot.sendMsg(message, "Топ хуевых шутников сегодня: ");
             if (sortedUsers.size() < 6)
                 n = sortedUsers.size();
             else
                 n = 5;
             for (int i = 0; i < n; i++) {
-                messageSender.sendMessage(message, allUsers.get(sortedUsers.get(i)).getFirstName() + " " + allUsers.get(sortedUsers.get(i)).getLastName() +
+                jokeBot.sendMessage(message, allUsers.get(sortedUsers.get(i)).getFirstName() + " " + allUsers.get(sortedUsers.get(i)).getLastName() +
                         " @" + allUsers.get(sortedUsers.get(i)).getUserName() + " рейтинг " +
                         mapOperations.sortingValues(finalMapBeyondZero).get(i).toString());
             }
@@ -217,14 +227,14 @@ public class MessageOperations {
         }
         ArrayList<ReceivedMessage> sortedUsersOverZero = mapOperations.sortingKeys(finalMapOverZero);
         if (sortedUsersOverZero.size() > 0) {
-            messageSender.sendMsg(message, "Топ нормальных шутников сегодня: ");
+            jokeBot.sendMsg(message, "Топ нормальных шутников сегодня: ");
             int tempI = sortedUsersOverZero.size() - 1;
             if (sortedUsersOverZero.size() < 6)
                 n = sortedUsersOverZero.size();
             else
                 n = 5;
             for (int i = 0; i < n; i++) {
-                messageSender.sendMessage(message, allUsers.get(sortedUsersOverZero.get(tempI)).getFirstName() + " " + allUsers.get(sortedUsersOverZero.get(tempI)).getLastName() +
+                jokeBot.sendMessage(message, allUsers.get(sortedUsersOverZero.get(tempI)).getFirstName() + " " + allUsers.get(sortedUsersOverZero.get(tempI)).getLastName() +
                         " @" + allUsers.get(sortedUsersOverZero.get(tempI)).getUserName() + " рейтинг " +
                         mapOperations.sortingValues(finalMapOverZero).get(tempI).toString());
                 tempI--;

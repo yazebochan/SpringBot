@@ -19,12 +19,19 @@ import main.bot.MessageOperations;
 @SpringBootApplication
 public class JokeBot extends TelegramLongPollingBot{
 
-
+    private static JokeBot jokeBot = getJokeBot();
+    public static  JokeBot getJokeBot(){
+        ApiContextInitializer.init();
+        if (jokeBot == null){
+            jokeBot = new JokeBot();
+        }
+        return  jokeBot;
+    }
+    MessageOperations messageOperations = new MessageOperations(jokeBot);
     public static HashMap<Long, HashMap<ReceivedMessage, JokeInMap>> chatMap = new HashMap<>();
     HashMap<Integer, NewUser> allUsers = new HashMap<>();
-    MessageOperations messageOperations = new MessageOperations();
 
-    public static void main(String[] args) throws TelegramApiException {
+    public static void main(String args[]) throws TelegramApiException {
         ApiContextInitializer.init();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
         try {
@@ -41,7 +48,6 @@ public class JokeBot extends TelegramLongPollingBot{
        // MapEraser st = new MapEraser();
        // time.scheduleAtFixedRate(st, cal.getTime(),86400000);
     }
-
 
 
     @Override
@@ -80,5 +86,25 @@ public class JokeBot extends TelegramLongPollingBot{
         }
     }
 
-
+    public void sendMessage(Message message, String text) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setText(text);
+        try {
+            sendMessage(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+    public void sendMsg(Message message, String text) {
+        SendMessage sendMsg = new SendMessage();
+        sendMsg.setChatId(message.getChatId().toString());
+        sendMsg.setReplyToMessageId(message.getMessageId());
+        sendMsg.setText(text);
+        try {
+            sendMessage(sendMsg);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
 }
