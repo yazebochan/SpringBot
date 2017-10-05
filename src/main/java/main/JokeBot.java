@@ -56,7 +56,7 @@ public class JokeBot extends TelegramLongPollingBot{
 
     @Override
     public void onUpdateReceived(Update update) {
-
+        Update msgUpdate = update;
         Message message = update.getMessage();
         NewUser newUser1 = new NewUser();
         try {
@@ -80,26 +80,5 @@ public class JokeBot extends TelegramLongPollingBot{
         }
     }
 
-    protected void sendMsg(Message message, String text) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setText(text);
-        try {
-            sendMessage(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
 
-    protected void sendMessage(Message message, String text) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText(text);
-        try {
-            sendMessage(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
 }

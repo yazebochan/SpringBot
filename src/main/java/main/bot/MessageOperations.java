@@ -6,9 +6,13 @@ import org.telegram.telegrambots.api.objects.Update;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import main.JokeBot;
 
-public class MessageOperations extends JokeBot {
+import main.JokeBot;
+import org.telegram.telegrambots.bots.AbsSender;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
+
+public class MessageOperations {
+    MessageSender messageSender = new MessageSender();
     public void messageEqualsMinus(Update update, NewUser newUser1, HashMap<Long, HashMap<ReceivedMessage, JokeInMap>> chatMap, HashMap<Integer, NewUser> allUsers){
         Message message = update.getMessage();
         ReceivedMessage newUser = new ReceivedMessage();
@@ -31,7 +35,7 @@ public class MessageOperations extends JokeBot {
         {
             if (chatMap.get(message.getChatId()).containsKey(newUser)) {
                 if (chatMap.get(message.getChatId()).get(newUser).getReactedUser().contains(joke.getReactedUser())) {
-                    sendMsg(message, "Уже минусовал это сообщение, хватит");
+                    messageSender.sendMsg(message, "Уже минусовал это сообщение, хватит");
                 } else {
                     Integer i = chatMap.get(message.getChatId()) //get innerMap
                             .get(newUser).getCount(); //get number of "Jokes" for currently user
@@ -83,7 +87,7 @@ public class MessageOperations extends JokeBot {
             {
                 if (chatMap.get(message.getChatId()).containsKey(newUser)) {
                     if (chatMap.get(message.getChatId()).get(newUser).getReactedUser().contains(joke.getReactedUser()) && chatMap.get(message.getChatId()).get(newUser).getCount().equals(1)) {
-                        sendMsg(message, "Уже плюсовал это сообщение, шутка норм, согласен");
+                        messageSender.sendMsg(message, "Уже плюсовал это сообщение, шутка норм, согласен");
                     } else {
                         Integer i = chatMap.get(message.getChatId()) //get innerMap
                                 .get(newUser).getCount(); //get number of "Jokes" for currently user
@@ -118,10 +122,10 @@ public class MessageOperations extends JokeBot {
         ArrayList<Integer> maxUsers = new ArrayList<>();
 
         if (!chatMap.containsKey(message.getChatId())) {
-            sendMsg(message, "В данном чате еще никто \"Хуево\" не шутил");
+            messageSender.sendMsg(message, "В данном чате еще никто \"Хуево\" не шутил");
         } else {
             if (chatMap.isEmpty()) {
-                sendMsg(message, "список пуст");
+                messageSender.sendMsg(message, "список пуст");
             } else {
                 Integer min = 0;
                 Integer max = 0;
@@ -157,14 +161,14 @@ public class MessageOperations extends JokeBot {
                 }
                 System.out.println(maxUsers);
                 {
-                    sendMsg(message, "Звание \"Хуев шутник\" сегодня получает ");
+                    messageSender.sendMsg(message, "Звание \"Хуев шутник\" сегодня получает ");
                     for (Integer i : minUsers) {
-                        sendMessage(message, allUsers.get(i).getFirstName() + " " + allUsers.get(i).getLastName() +
+                        messageSender.sendMessage(message, allUsers.get(i).getFirstName() + " " + allUsers.get(i).getLastName() +
                                 " @" + allUsers.get(i).getUserName() + " рейтинг " + min);
                     }
-                    sendMsg(message, "Звание \"Шутник дня\" сегодня получает ");
+                    messageSender.sendMsg(message, "Звание \"Шутник дня\" сегодня получает ");
                     for (Integer j : maxUsers) {
-                        sendMessage(message, allUsers.get(j).getFirstName() + " " + allUsers.get(j).getLastName() +
+                        messageSender.sendMessage(message, allUsers.get(j).getFirstName() + " " + allUsers.get(j).getLastName() +
                                 " @" + allUsers.get(j).getUserName() + " рейтинг " + max);
                     }
                     maxUsers.clear();
@@ -199,13 +203,13 @@ public class MessageOperations extends JokeBot {
         MapOperations mapOperations = new MapOperations();
         ArrayList<ReceivedMessage> sortedUsers = mapOperations.sortingKeys(finalMapBeyondZero);
         if (sortedUsers.size() > 0) {
-            sendMsg(message, "Топ хуевых шутников сегодня: ");
+            messageSender.sendMsg(message, "Топ хуевых шутников сегодня: ");
             if (sortedUsers.size() < 6)
                 n = sortedUsers.size();
             else
                 n = 5;
             for (int i = 0; i < n; i++) {
-                sendMessage(message, allUsers.get(sortedUsers.get(i)).getFirstName() + " " + allUsers.get(sortedUsers.get(i)).getLastName() +
+                messageSender.sendMessage(message, allUsers.get(sortedUsers.get(i)).getFirstName() + " " + allUsers.get(sortedUsers.get(i)).getLastName() +
                         " @" + allUsers.get(sortedUsers.get(i)).getUserName() + " рейтинг " +
                         mapOperations.sortingValues(finalMapBeyondZero).get(i).toString());
             }
@@ -213,14 +217,14 @@ public class MessageOperations extends JokeBot {
         }
         ArrayList<ReceivedMessage> sortedUsersOverZero = mapOperations.sortingKeys(finalMapOverZero);
         if (sortedUsersOverZero.size() > 0) {
-            sendMsg(message, "Топ нормальных шутников сегодня: ");
+            messageSender.sendMsg(message, "Топ нормальных шутников сегодня: ");
             int tempI = sortedUsersOverZero.size() - 1;
             if (sortedUsersOverZero.size() < 6)
                 n = sortedUsersOverZero.size();
             else
                 n = 5;
             for (int i = 0; i < n; i++) {
-                sendMessage(message, allUsers.get(sortedUsersOverZero.get(tempI)).getFirstName() + " " + allUsers.get(sortedUsersOverZero.get(tempI)).getLastName() +
+                messageSender.sendMessage(message, allUsers.get(sortedUsersOverZero.get(tempI)).getFirstName() + " " + allUsers.get(sortedUsersOverZero.get(tempI)).getLastName() +
                         " @" + allUsers.get(sortedUsersOverZero.get(tempI)).getUserName() + " рейтинг " +
                         mapOperations.sortingValues(finalMapOverZero).get(tempI).toString());
                 tempI--;
@@ -229,5 +233,4 @@ public class MessageOperations extends JokeBot {
         }
 
     }
-
 }
