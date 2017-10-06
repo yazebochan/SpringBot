@@ -1,4 +1,4 @@
-package main.AnotherData;
+package com.jokebot.util;
 
 public class BotStrings {
     public static String botUserName = "jokestats_bot";

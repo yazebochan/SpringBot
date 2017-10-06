@@ -1,22 +1,25 @@
-package main.bot;
+package com.jokebot.util;
 
+import com.jokebot.bot.JokeBot;
+import com.jokebot.model.Joke;
+import com.jokebot.model.JokeInMap;
+import com.jokebot.model.NewUser;
+import com.jokebot.model.ReceivedMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-
-import main.JokeBot;
-import org.telegram.telegrambots.bots.AbsSender;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+import java.util.Map;
 
 public class MessageOperations {
-    JokeBot jokeBot;
+    private JokeBot jokeBot;
+
     public MessageOperations(JokeBot jokeBot){
         this.jokeBot = jokeBot;
     }
-    public void messageEqualsMinus(Update update, NewUser newUser1, HashMap<Long, HashMap<ReceivedMessage, JokeInMap>> chatMap, HashMap<Integer, NewUser> allUsers){
+
+    public void messageEqualsMinus(Update update, NewUser newUser1, Map<Long, Map<ReceivedMessage, JokeInMap>> chatMap, Map<Integer, NewUser> allUsers){
         Message message = update.getMessage();
         ReceivedMessage newUser = new ReceivedMessage();
         newUser.setUserName(message.getReplyToMessage().getFrom().getUserName());
@@ -66,7 +69,7 @@ public class MessageOperations {
         }
 
     }
-    public void messageEqualsPlus(Update update, NewUser newUser1, HashMap<Long, HashMap<ReceivedMessage, JokeInMap>> chatMap, HashMap<Integer, NewUser> allUsers){
+    public void messageEqualsPlus(Update update, NewUser newUser1, Map<Long, Map<ReceivedMessage, JokeInMap>> chatMap, Map<Integer, NewUser> allUsers){
         {
             Message message = update.getMessage();
             ReceivedMessage newUser = new ReceivedMessage();
@@ -118,7 +121,7 @@ public class MessageOperations {
         }
     }
 
-    public void messsageEqualsShow(Update update, HashMap<Long, HashMap<ReceivedMessage, JokeInMap>> chatMap, HashMap<Integer, NewUser> allUsers){
+    public void messsageEqualsShow(Update update, Map<Long, Map<ReceivedMessage, JokeInMap>> chatMap, Map<Integer, NewUser> allUsers){
         Message message = update.getMessage();
         ArrayList<Integer> minUsers = new ArrayList<>();
         ArrayList<Integer> maxUsers = new ArrayList<>();
@@ -180,12 +183,12 @@ public class MessageOperations {
             }
         }
     }
-    public void messageEqualsSort(Update update, HashMap<Long, HashMap<ReceivedMessage, JokeInMap>> chatMap, HashMap<Integer, NewUser> allUsers){
+    public void messageEqualsSort(Update update, Map<Long, Map<ReceivedMessage, JokeInMap>> chatMap, Map<Integer, NewUser> allUsers){
         Message message = update.getMessage();
-        HashMap<ReceivedMessage, JokeInMap> tmpMap = chatMap.get(message.getChatId());
-        HashMap<Integer, Integer> finalMap = new HashMap<>();
-        HashMap<Integer, Integer> finalMapOverZero = new HashMap<>();
-        HashMap<Integer, Integer> finalMapBeyondZero = new HashMap<>();
+        Map<ReceivedMessage, JokeInMap> tmpMap = chatMap.get(message.getChatId());
+        Map<Integer, Integer> finalMap = new HashMap<>();
+        Map<Integer, Integer> finalMapOverZero = new HashMap<>();
+        Map<Integer, Integer> finalMapBeyondZero = new HashMap<>();
         for (ReceivedMessage key : tmpMap.keySet()){
             if (finalMap.containsKey(key.getId())){
                 finalMap.put(key.getId(), finalMap.get(key.getId()) + chatMap.get(message.getChatId()).get(key).getCount());
