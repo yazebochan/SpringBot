@@ -2,8 +2,6 @@ package main;
 
 import main.AnotherData.BotStrings;
 import main.bot.*;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.telegram.telegrambots.*;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -16,15 +14,22 @@ import java.util.*;
 
 import main.bot.MessageOperations;
 
-@SpringBootApplication
 public class JokeBot extends TelegramLongPollingBot{
 
+    public static JokeBot jokeBot = getJokeBot();
+    private static JokeBot getJokeBot(){
+        ApiContextInitializer.init();
+        if (jokeBot == null){
+            jokeBot = new JokeBot();
+        }
+        return jokeBot;
+    }
 
     public static HashMap<Long, HashMap<ReceivedMessage, JokeInMap>> chatMap = new HashMap<>();
     HashMap<Integer, NewUser> allUsers = new HashMap<>();
-    MessageOperations messageOperations = new MessageOperations();
+    MessageOperations messageOperations = new MessageOperations(jokeBot);
 
-    public static void main(String[] args) throws TelegramApiException {
+    public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
         try {
@@ -32,14 +37,13 @@ public class JokeBot extends TelegramLongPollingBot{
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        SpringApplication.run(JokeBot.class, args);
-
+        Integer day = new Date().getDay()+1;
         Calendar cal = Calendar.getInstance();
-        Date date = new Date(117,8,7,23,59,59);
+        Date date = new Date(117,9,day,23,59,59);
         cal.setTime(date);
-       // Timer time = new Timer();
-       // MapEraser st = new MapEraser();
-       // time.scheduleAtFixedRate(st, cal.getTime(),86400000);
+        Timer time = new Timer();
+        MapEraser st = new MapEraser();
+        time.scheduleAtFixedRate(st, cal.getTime(),86400000);
     }
 
 
@@ -79,6 +83,26 @@ public class JokeBot extends TelegramLongPollingBot{
         } catch (NullPointerException e) {
         }
     }
-
+    public void sendMessage(Message message, String text) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setText(text);
+        try {
+            sendMessage(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+    public void sendMsg(Message message, String text) {
+        SendMessage sendMsg = new SendMessage();
+        sendMsg.setChatId(message.getChatId().toString());
+        sendMsg.setReplyToMessageId(message.getMessageId());
+        sendMsg.setText(text);
+        try {
+            sendMessage(sendMsg);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
