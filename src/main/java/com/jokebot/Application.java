@@ -27,7 +27,7 @@ public class Application {
         Date date = new Date(117,9,day,23,59,59);
         cal.setTime(date);
         Timer time = new Timer();
-        MapEraser st = new MapEraser(jokeBot);
+        MapEraser st = new MapEraser(jokeBot.getChatMap());
 
         time.scheduleAtFixedRate(st, cal.getTime(),86400000);
     }
