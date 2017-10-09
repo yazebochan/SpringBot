@@ -1,4 +1,4 @@
-package main.spring;
+package com.jokebot.spring;
 
 public class Greeting {
 

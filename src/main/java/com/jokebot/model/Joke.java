@@ -1,4 +1,4 @@
-package main.bot;
+package com.jokebot.model;
 
 public class Joke {
     private Integer messageId;

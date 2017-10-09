@@ -1,9 +1,9 @@
-package main.bot;
+package com.jokebot.util;
 
 import java.util.*;
 
 public class MapOperations {
-    public static ArrayList sortingKeys(HashMap hmap) {
+    public static ArrayList sortingKeys(Map hmap) {
         ArrayList<Object> sortedUsers = new ArrayList<>();
         Map<Integer, String> map = sortByValues(hmap);
         Set set2 = map.entrySet();
@@ -15,7 +15,7 @@ public class MapOperations {
         return sortedUsers;
     }
 
-    public static ArrayList sortingValues(HashMap hmap) {
+    public static ArrayList sortingValues(Map hmap) {
         ArrayList<Object> sortedValues = new ArrayList<>();
         Map<Integer, String> map = sortByValues(hmap);
         Set set2 = map.entrySet();
@@ -28,7 +28,7 @@ public class MapOperations {
     }
 
 
-    private static HashMap sortByValues(HashMap map) {
+    private static HashMap sortByValues(Map map) {
         List list = new LinkedList(map.entrySet());
         // Defined Custom Comparator here
         Collections.sort(list, new Comparator() {

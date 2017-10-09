@@ -1,14 +1,17 @@
-package main.bot;
+package com.jokebot.util;
 
-import main.JokeBot;
-
+import java.util.Map;
 import java.util.TimerTask;
 
 public class MapEraser extends TimerTask {
+    private final Map map;
+    public MapEraser(Map map){
+        this.map = map;
+    }
 
     @Override
     public void run(){
-        JokeBot.chatMap.clear();
+        map.clear();
         System.out.println("erased");
     }
 }
