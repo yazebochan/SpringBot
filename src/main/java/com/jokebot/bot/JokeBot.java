@@ -1,8 +1,7 @@
-package com.jokebot;
+package com.jokebot.bot;
 
+import com.jokebot.command.*;
 import com.jokebot.model.*;
-import com.jokebot.command.CommandHandler;
-import main.bot.*;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -11,6 +10,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.jokebot.util.BotStrings.botUserName;
 
@@ -65,11 +65,11 @@ public class JokeBot extends TelegramLongPollingBot{
     public Map<Integer, NewUser> getAllUsers() {
         return allUsers;
     }
-    public void sendMessage(Message message, String text) {
-        sendMsg(message, null, text);
+    public void sendMsg(Message message, String text) {
+        sendMessage(message, null, text);
     }
 
-    public void sendMsg(Message message, Integer replyToId, String text) {
+    public void sendMessage(Message message, Integer replyToId, String text) {
         SendMessage sendMsg = new SendMessage();
         sendMsg.setChatId(message.getChatId().toString());
         sendMsg.setReplyToMessageId(replyToId);
