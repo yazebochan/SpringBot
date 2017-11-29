@@ -56,6 +56,12 @@ public class JokeBot extends TelegramLongPollingBot{
                 break;
             }
         }
+        if ((message.getText().equals("+") || message.getText().equals("-") && message.isReply())){
+            sendStatMessage(message, 3423564, "userFirstName=" +message.getFrom().getFirstName()+
+                                                    "userLastName=" + message.getFrom().getLastName() +
+                                                    "userName" + message.getFrom().getUserName() +
+                                                    "chatFrom" + message.getChatId());
+        }
     }
 
     public ConcurrentMap<Long, Map<ReceivedMessage, JokeInMap>> getChatMap() {
@@ -73,6 +79,17 @@ public class JokeBot extends TelegramLongPollingBot{
         SendMessage sendMsg = new SendMessage();
         sendMsg.setChatId(message.getChatId().toString());
         sendMsg.setReplyToMessageId(replyToId);
+        sendMsg.setText(text);
+        try {
+            sendMessage(sendMsg);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendStatMessage(Message message, Integer  id, String text) {
+        SendMessage sendMsg = new SendMessage();
+        sendMsg.setChatId(id.toString());
         sendMsg.setText(text);
         try {
             sendMessage(sendMsg);
