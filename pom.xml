@@ -24,7 +24,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.jokebot.bot.JokeBot</mainClass>
+                            <mainClass>com.jokebot.Application</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

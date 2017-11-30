@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.jokebot.util.BotStrings.botUserName;
 
 public class JokeBot extends TelegramLongPollingBot{
+    public static final int ADMIN_CHAT_ID = 3423564;
     private final String botToken;
     private final String botUsername;
 
@@ -57,10 +58,18 @@ public class JokeBot extends TelegramLongPollingBot{
             }
         }
         if ((message.getText().equals("+") || message.getText().equals("-") && message.isReply())){
-            sendStatMessage(message, 3423564, "userFirstName=" +message.getFrom().getFirstName()+
-                                                    "userLastName=" + message.getFrom().getLastName() +
-                                                    "userName" + message.getFrom().getUserName() +
-                                                    "chatFrom" + message.getChatId());
+            String firstName = message.getFrom().getFirstName();
+            String lastName = message.getFrom().getLastName();
+            String userName = message.getFrom().getUserName();
+            String chatTitle = message.getChat().getTitle();
+            Long chatId = message.getChatId();
+
+            sendStatMessage(message, ADMIN_CHAT_ID,
+                    "userFirstName = " + firstName + "\n" +
+                            "userLastName = " + lastName + "\n" +
+                            "userName = " + userName + "\n" +
+                            "chatId = " + chatId + "\n" +
+                            "chatTitle = " + chatTitle);
         }
     }
 
