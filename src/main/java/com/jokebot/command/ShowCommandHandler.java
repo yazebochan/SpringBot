@@ -30,7 +30,8 @@ public class ShowCommandHandler implements CommandHandler {
     public void handle(Message message) {
         Long chatId = message.getChatId();
         Integer messageId = message.getMessageId();
-
+        StringBuilder badBuilder = new StringBuilder();
+        StringBuilder goodBuilder = new StringBuilder();
         ArrayList<Integer> minUsers = new ArrayList<>();
         ArrayList<Integer> maxUsers = new ArrayList<>();
 
@@ -76,17 +77,23 @@ public class ShowCommandHandler implements CommandHandler {
                 if (!minUsers.isEmpty() && !(min == 0)) {
                     jokeBot.sendMessage(message, messageId, "Звание \"Хуев шутник\" сегодня получает ");
                     for (Integer i : minUsers) {
-                        jokeBot.sendMsg(message, allUsers.get(i).getFirstName() + " " + allUsers.get(i).getLastName() +
-                                " \"" + allUsers.get(i).getUserName() + "\" рейтинг " + min);
+                        badBuilder.append(allUsers.get(i).getFirstName() + " " + allUsers.get(i).getLastName() +
+                                " \"" + allUsers.get(i).getUserName() + "\" рейтинг " + min + "\n");
+                       // jokeBot.sendMsg(message, allUsers.get(i).getFirstName() + " " + allUsers.get(i).getLastName() +
+                               // " \"" + allUsers.get(i).getUserName() + "\" рейтинг " + min);
                     }
+                    jokeBot.sendMsg(message, badBuilder.toString());
                     minUsers.clear();
                 }
                 if (!maxUsers.isEmpty() && !(max == 0)) {
                     jokeBot.sendMessage(message, messageId, "Звание \"Шутник дня\" сегодня получает ");
                     for (Integer j : maxUsers) {
-                        jokeBot.sendMsg(message, allUsers.get(j).getFirstName() + " " + allUsers.get(j).getLastName() +
-                                " \"" + allUsers.get(j).getUserName() + "\" рейтинг " + max);
+                        goodBuilder.append(allUsers.get(j).getFirstName() + " " + allUsers.get(j).getLastName() +
+                                " \"" + allUsers.get(j).getUserName() + "\" рейтинг " + max + "\n");
+                       // jokeBot.sendMsg(message, allUsers.get(j).getFirstName() + " " + allUsers.get(j).getLastName() +
+                              //  " \"" + allUsers.get(j).getUserName() + "\" рейтинг " + max);
                     }
+                    jokeBot.sendMsg(message, goodBuilder.toString());
                     maxUsers.clear();
                 }
             }

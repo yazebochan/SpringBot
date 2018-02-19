@@ -50,6 +50,7 @@ public class JokeBot extends TelegramLongPollingBot{
 
     @Override
     public void onUpdateReceived(Update update) {
+        JokesCommandHandler jokesCommandHandler = new JokesCommandHandler();
         Message message = update.getMessage();
         for (CommandHandler commandHandler : commandHandlers){
             if(commandHandler.canHandle(message)){
@@ -57,7 +58,7 @@ public class JokeBot extends TelegramLongPollingBot{
                 break;
             }
         }
-        if ((message.getText().equals("+") || message.getText().equals("-") && message.isReply())){
+        if ((message.getText().equals("+") && message.isReply() || message.getText().equals("-") && message.isReply())){
             String firstName = message.getFrom().getFirstName();
             String lastName = message.getFrom().getLastName();
             String userName = message.getFrom().getUserName();
@@ -70,6 +71,9 @@ public class JokeBot extends TelegramLongPollingBot{
                             "userName = " + userName + "\n" +
                             "chatId = " + chatId + "\n" +
                             "chatTitle = " + chatTitle);
+        }
+        if (message.getText().equals("joke")){
+            sendMsg(message, jokesCommandHandler.joke());
         }
     }
 

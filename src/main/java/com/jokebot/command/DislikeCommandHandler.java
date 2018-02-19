@@ -46,35 +46,38 @@ public class DislikeCommandHandler implements CommandHandler{
         joke.setCount(-1);
 
         ConcurrentMap<Long, Map<ReceivedMessage, JokeInMap>> chatMap = jokeBot.getChatMap();
-        if (chatMap.containsKey(message.getChatId()))  //check for the chat in chatMap
-        {
-            if (chatMap.get(message.getChatId()).containsKey(newUser)) {
-                if (chatMap.get(message.getChatId()).get(newUser).getReactedUser().contains(joke.getReactedUser())  && chatMap.get(message.getChatId()).get(newUser).getCount().equals(-1)) {
-                    jokeBot.sendMsg(message, "Уже минусовал это сообщение, хватит");
-                } else {
-                    Integer i = chatMap.get(message.getChatId()) //get innerMap
-                            .get(newUser).getCount(); //get number of "Jokes" for currently user
-                    chatMap.get(message.getChatId()).get(newUser).setReactedUser(message.getFrom().getId());
-                    chatMap.get(message.getChatId()).get(newUser).setCount(i - 1);
+        if (message.getFrom().getId().equals(joke.getMessageId())) {
+            jokeBot.sendMsg(message, "Себя минусовать вздумал?");
+        }
+        else {
 
+            if (chatMap.containsKey(message.getChatId()))  //check for the chat in chatMap
+            {
+                if (chatMap.get(message.getChatId()).containsKey(newUser)) {
+                    if (chatMap.get(message.getChatId()).get(newUser).getReactedUser().contains(joke.getReactedUser()) && chatMap.get(message.getChatId()).get(newUser).getCount().equals(-1)) {
+                        jokeBot.sendMsg(message, "Уже минусовал это сообщение, хватит");
+                    } else {
+                        Integer i = chatMap.get(message.getChatId()) //get innerMap
+                                .get(newUser).getCount(); //get number of "Jokes" for currently user
+                        chatMap.get(message.getChatId()).get(newUser).setReactedUser(message.getFrom().getId());
+                        chatMap.get(message.getChatId()).get(newUser).setCount(i - 1);
+
+                    }
+                } else {
+                    JokeInMap jokeInMap = new JokeInMap();
+                    jokeInMap.setCount(joke.getCount());
+                    jokeInMap.setMessageId(joke.getMessageId());
+                    jokeInMap.setReactedUser(joke.getReactedUser());
+                    chatMap.get(message.getChatId()).put(newUser, jokeInMap);
                 }
             } else {
                 JokeInMap jokeInMap = new JokeInMap();
                 jokeInMap.setCount(joke.getCount());
                 jokeInMap.setMessageId(joke.getMessageId());
                 jokeInMap.setReactedUser(joke.getReactedUser());
+                chatMap.put(message.getChatId(), new HashMap<ReceivedMessage, JokeInMap>());
                 chatMap.get(message.getChatId()).put(newUser, jokeInMap);
             }
-        }
-
-        else
-        {
-            JokeInMap jokeInMap = new JokeInMap();
-            jokeInMap.setCount(joke.getCount());
-            jokeInMap.setMessageId(joke.getMessageId());
-            jokeInMap.setReactedUser(joke.getReactedUser());
-            chatMap.put(message.getChatId(), new HashMap<ReceivedMessage, JokeInMap>());
-            chatMap.get(message.getChatId()).put(newUser, jokeInMap);
         }
     }
 }
